@@ -199,13 +199,18 @@
   (or (System/getenv "HONEYCOMB_ENDPOINT")
       "https://api.honeycomb.io:443"))
 
+(defn get-s3-endpoint []
+  (System/getenv "S3_ENDPOINT"))
+
 (defn get-google-oauth-client []
   (-> @config-map :google-oauth-client))
 
-(def server-origin (case (get-env)
-                     :prod "https://api.instantdb.com"
-                     :staging "https://api-staging.instantdb.com"
-                     "http://localhost:8888"))
+(def server-origin
+  (or (System/getenv "SERVER_ORIGIN")
+      (case (get-env)
+        :prod "https://api.instantdb.com"
+        :staging "https://api-staging.instantdb.com"
+        "http://localhost:8888")))
 
 (def s3-bucket-name
   (case (get-env)

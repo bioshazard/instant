@@ -85,6 +85,29 @@ make test
 
 If you want to make any changes to your configuration, update the `resources/config/override.edn` file that was created when you ran `make docker-compose` or `make bootstrap-oss`. `src/instant/config_edn.clj` has a spec that describes the data for the file, or you can look at `resources/config/dev.edn` for an example.
 
+## Self-hosting on a custom domain
+
+The repo includes a `docker-compose.yml` that runs the Instant server, dashboard,
+Postgres and a MinIO instance. To run everything:
+
+```sh
+docker compose up
+```
+
+Instant will listen on `http://localhost:8888` by default. Set `PRODUCTION=true`
+and override `SERVER_ORIGIN` if you want to expose a custom domain. The server
+uses this value when it builds OAuth callback URLs and upload links:
+
+```sh
+PRODUCTION=true SERVER_ORIGIN=https://example.com docker compose up
+```
+
+The server also reads `S3_ENDPOINT` for a custom S3-compatible endpoint. The
+compose file sets this to the included MinIO service.
+
+Update your DNS or reverse proxy to forward traffic to port `8888` on the host.
+Login emails are printed to the server logs so you can copy the magic code.
+
 # Questions?
 
 If you have any questions, feel free to drop us a line on our [Discord](https://discord.com/invite/VU53p7uQcE).
