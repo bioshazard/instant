@@ -26,21 +26,20 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-dev
     depends_on:
       - postgres
       - minio
     environment:
-      PRODUCTION: "true"
       DATABASE_URL: "postgresql://instant:pass@postgres:5432/instant"
       S3_ENDPOINT: "http://minio:9000"
       AWS_ACCESS_KEY_ID: minio
       AWS_SECRET_ACCESS_KEY: minio123
       AWS_REGION: us-east-1
+      NREPL_BIND_ADDRESS: "0.0.0.0"
     ports:
       - "8888:8888"
-    command: >-
-      sh -c 'java -Djava.awt.headless=true -server -jar target/instant-standalone.jar'
+      - "6005:6005"
 
   dash:
     image: node:20

@@ -95,12 +95,15 @@ root run:
 docker compose up
 ```
 
-Instant will listen on `http://localhost:8888` by default. Set `PRODUCTION=true`
-and override `SERVER_ORIGIN` if you want to expose a custom domain. The server
-uses this value when it builds OAuth callback URLs and upload links:
+The server image runs `make dev-oss` so it bootstraps the configuration and
+migrates the database automatically on first start.
+
+Instant will listen on `http://localhost:8888` by default. Override
+`SERVER_ORIGIN` if you want to expose a custom domain. The server uses this
+value when it builds OAuth callback URLs and upload links:
 
 ```sh
-PRODUCTION=true SERVER_ORIGIN=https://example.com docker compose up
+SERVER_ORIGIN=https://example.com docker compose up
 ```
 
 The server also reads `S3_ENDPOINT` for a custom S3-compatible endpoint. The
