@@ -87,8 +87,9 @@ If you want to make any changes to your configuration, update the `resources/con
 
 ## Self-hosting on a custom domain
 
-The repo includes a `docker-compose.yml` that runs the Instant server, dashboard,
-Postgres and a MinIO instance. To run everything:
+The repo includes a `docker-compose.yml` at the repository root that runs the
+Instant server, dashboard, Postgres and a MinIO instance. From the repository
+root run:
 
 ```sh
 docker compose up
