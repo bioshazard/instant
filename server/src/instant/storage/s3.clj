@@ -5,26 +5,43 @@
             [instant.util.date :as date-util])
   (:import
    [software.amazon.awssdk.auth.credentials DefaultCredentialsProvider]
-   [software.amazon.awssdk.services.s3 S3AsyncClient S3Client]
+   [software.amazon.awssdk.services.s3 S3AsyncClient S3Client S3Configuration]
    [java.time Duration Instant]
-   [java.time.temporal ChronoUnit]))
+   [java.time.temporal ChronoUnit]
+   [java.net URI]))
 
 (set! *warn-on-reflection* true)
 
 ;; Configuration
 ;; ----------------------
 
-(def ^:private s3-client* (delay (.build (S3Client/builder))))
+(def ^:private s3-client*
+  (delay
+    (let [builder (S3Client/builder)]
+      (when-let [endpoint (config/get-s3-endpoint)]
+        (.endpointOverride builder (URI/create endpoint))
+        (.serviceConfiguration builder
+                               (-> (S3Configuration/builder)
+                                   (.pathStyleAccessEnabled true)
+                                   (.build))))
+      (.build builder))))
 
 (defn s3-client
   "Standard blocking S3 client. We use this for most operations."
   ^S3Client []
   @s3-client*)
 
-(def ^:private s3-async-client* (delay
-                                  (-> (S3AsyncClient/crtBuilder)
-                                      (.targetThroughputInGbps 20.0)
-                                      (.build))))
+(def ^:private s3-async-client*
+  (delay
+    (let [builder (-> (S3AsyncClient/crtBuilder)
+                      (.targetThroughputInGbps 20.0))]
+      (when-let [endpoint (config/get-s3-endpoint)]
+        (.endpointOverride builder (URI/create endpoint))
+        (.serviceConfiguration builder
+                               (-> (S3Configuration/builder)
+                                   (.pathStyleAccessEnabled true)
+                                   (.build))))
+      (.build builder))))
 
 (defn s3-async-client
   "Async S3 Client. Useful when you want to asynchronously upload streams to S3"
